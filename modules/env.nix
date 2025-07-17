@@ -127,12 +127,6 @@ in
   config = {
     # Default env
     env = lib.mkBefore [
-      # Expose the path to nixpkgs
-      {
-        name = "NIXPKGS_PATH";
-        value = toString pkgs.path;
-      }
-
       # This is used by bash-completions to find new completions on demand
       {
         name = "XDG_DATA_DIRS";
