@@ -89,7 +89,7 @@ let
             in
             if help == null || help == "" then "  ${name}" else "  ${pad name len} - ${help}";
         in
-        "\n${ansi.bold}[${category}]${ansi.reset}\n\n" + builtins.concatStringsSep "\n" (map opCmd cmd);
+        "${ansi.bold}[${category}]${ansi.reset}\n" + builtins.concatStringsSep "\n" (map opCmd cmd);
     in
     builtins.concatStringsSep "\n" (map opCat commandByCategoriesSorted) + "\n";
 
