@@ -1,6 +1,7 @@
 {
   devshell,
   runTest,
+  pkgs,
 }:
 {
   # Test the environment variables
