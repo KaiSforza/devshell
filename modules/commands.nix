@@ -4,8 +4,23 @@
   pkgs,
   ...
 }:
-with lib;
 let
+  inherit (lib)
+    foldl'
+    stringLength
+    attrNames
+    catAttrs
+    attrValues
+    unique
+    filterAttrs
+    mapAttrs
+    genAttrs
+    concatStringsSep
+    mapAttrsToList
+    mkOption
+    types
+    literalExpression
+  ;
   ansi = import ../nix/ansi.nix;
 
   # Because we want to be able to push pure JSON-like data into the
@@ -49,7 +64,7 @@ let
           help = if cmd.help != null then cmd.help else pkg.meta.description or "";
         };
 
-      commands = lib.mapAttrs cleanName cmds;
+      commands = mapAttrs cleanName cmds;
 
       maxCommandLength = foldl'
         (m: v: if v > m then v else m)
@@ -59,14 +74,14 @@ let
           (attrNames commands)
         );
 
-      commandByCategories = lib.genAttrs (
-        lib.unique (
+      commandByCategories = genAttrs (
+        unique (
         catAttrs "category" (attrValues commands)
         )
       )
       (
         category:
-        lib.filterAttrs (_: x: x.category == category) commands
+        filterAttrs (_: x: x.category == category) commands
       );
 
       opCat =
@@ -79,9 +94,9 @@ let
               then "  ${name}"
               else "  ${pad name (maxCommandLength - (stringLength name))} - ${cmd.help}";
         in
-        "${ansi.bold}[${category}]${ansi.reset}\n" + concatStringsSep "\n" (lib.mapAttrsToList opCmd cmds);
+        "${ansi.bold}[${category}]${ansi.reset}\n" + concatStringsSep "\n" (mapAttrsToList opCmd cmds);
     in
-    concatStringsSep "\n" (lib.mapAttrsToList opCat commandByCategories) + "\n";
+    concatStringsSep "\n" (mapAttrsToList opCat commandByCategories) + "\n";
 
   # These are all the options available for the commands.
   commandOptions = {
@@ -179,5 +194,5 @@ in
 
   # Add the commands to the devshell packages. Either as wrapper scripts, or
   # the whole package.
-  config.devshell.packages = lib.mapAttrsToList commandToPackage config.commands;
+  config.devshell.packages = mapAttrsToList commandToPackage config.commands;
 }

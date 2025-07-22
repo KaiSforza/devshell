@@ -5,8 +5,24 @@
   options,
   ...
 }:
-with lib;
 let
+  inherit (lib)
+    strings
+    mapAttrs
+    mkOption
+    types
+    textClosureMap
+    filter
+    replaceStrings
+    mkEnableOption
+    id
+    stringAfter
+    optionalAttrs
+    attrNames
+    attrValues
+    foldl'
+    noDepEntry
+  ;
   cfg = config.devshell;
   sanitizedName = strings.sanitizeDerivationName cfg.name;
 

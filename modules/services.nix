@@ -4,8 +4,14 @@
   pkgs,
   ...
 }:
-with lib;
 let
+  inherit (lib)
+    mkOption
+    types
+    foldl
+    mapAttrsToList
+    concatLines
+  ;
   serviceOptions = {
     name = mkOption {
       type = types.nullOr types.str;
@@ -58,7 +64,7 @@ let
       description = if g.description == null then gName else g.description;
     in
     {
-      "${gname}:start" = {
+      "${gName}:start" = {
         category = "service groups";
         help = "Start ${description} services";
         command =

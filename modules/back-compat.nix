@@ -6,11 +6,15 @@
 }:
 # Avoid breaking back-compat for now.
 let
+  inherit (lib)
+    mkOption
+    types
+    noDepEntry
+  ;
   # Because we want to be able to push pure JSON-like data into the
   # environment.
   strOrPackage = import ../nix/strOrPackage.nix { inherit lib pkgs; };
 in
-with lib;
 {
   options = {
     bash.extra = mkOption {

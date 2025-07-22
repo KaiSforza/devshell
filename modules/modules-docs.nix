@@ -8,8 +8,30 @@
   config,
   ...
 }:
-with lib;
 let
+  inherit (lib)
+    mkOption
+    types
+    isString
+    isList
+    isFunction
+    hasAttr
+    sort
+    filter
+    concatStringsSep
+    optionAttrSetToDocList
+    partition
+    head
+    attrByPath
+    optionalAttrs
+    removePrefix
+    removeSuffix
+    hasPrefix
+    splitByAndCompare
+    compareLists
+    compare
+    mapAttrs
+  ;
   cfg = config.modules-docs;
 
   # Generate some meta data for a list of packages. This is what
@@ -82,8 +104,8 @@ let
   moduleDocCompare =
     a: b:
     let
-      isEnable = lib.hasPrefix "enable";
-      isPackage = lib.hasPrefix "package";
+      isEnable = hasPrefix "enable";
+      isPackage = hasPrefix "package";
       compareWithPrio = pred: cmp: splitByAndCompare pred compare cmp;
       moduleCmp = compareWithPrio isEnable (compareWithPrio isPackage compare);
     in

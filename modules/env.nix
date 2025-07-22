@@ -4,8 +4,25 @@
   pkgs,
   ...
 }:
-with lib;
 let
+  inherit (builtins)
+    head
+    filter
+    isList
+    match
+    split
+    typeOf
+  ;
+  inherit (lib)
+    assertMsg
+    escapeShellArg
+    literalExpression
+    mapAttrsToList
+    mkOption
+    mkEnableOption
+    optionalAttrs
+    types
+  ;
   envOptions = {
     value = mkOption {
       type =
@@ -183,7 +200,7 @@ in
   config = {
     # Default env
     devshell.startup_env = lib.concatStringsSep "\n" (
-        sortEnvs (attrValues (mapAttrs envToBash config.env))
+        sortEnvs (mapAttrsToList envToBash config.env)
     );
   };
 }

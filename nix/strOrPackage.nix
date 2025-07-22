@@ -1,6 +1,6 @@
 { lib, pkgs }:
-with lib;
 let
+  inherit (lib) types;
   resolveKey =
     key:
     let
