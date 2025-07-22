@@ -84,7 +84,7 @@
       # Exits badly if PRJ_ROOT isn't set, or if we cannot assume PRJ_ROOT
       # should be PWD.
       ! msg="$(entrypoint_clean /bin/sh -c 'exit 0' 2>&1)"
-      assert "$msg" == 'ERROR: please set the PRJ_ROOT env var to point to the project root'
+      assert "''${msg}" == "ERROR: please set the PRJ_ROOT env var to point to the project root"
 
       # Succeeds with --prj-root set
       entrypoint_clean --prj-root . /bin/sh -c 'exit 0'

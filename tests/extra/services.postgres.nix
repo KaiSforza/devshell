@@ -13,6 +13,7 @@
       };
     in
     runTest "simple" { } ''
+      set -x
       # Load the devshell
       source ${shell}/env.bash
 

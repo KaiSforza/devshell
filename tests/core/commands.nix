@@ -9,26 +9,24 @@
     let
       shell = devshell.mkShell {
         devshell.name = "commands-1";
-        commands = [
-          {
-            name = "bash-script";
+        commands = {
+          bash-script = {
             category = "hello";
             help = "Prints hello-bash";
             command = ''
               echo "hello-bash"
             '';
-          }
-          {
-            name = "python-script";
+          };
+          python-script = {
             category = "hello";
             help = "Prints hello-python";
             command = ''
               #!/usr/bin/env python3
               print("hello-python")
             '';
-          }
-          { package = "git"; }
-        ];
+          };
+          git = { package = "git"; };
+        };
       };
     in
     runTest "devshell-1" { } ''

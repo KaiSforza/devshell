@@ -39,27 +39,24 @@ with lib;
       findutils
       gnumake
     ];
-    env = [
-      {
-        name = "CC";
+    env = {
+      CC = {
         value = "cc";
-      }
-      {
-        name = "CPP";
+      };
+      CPP = {
         value = "cpp";
-      }
-      {
-        name = "CXX";
+      };
+      CXX = {
         value = "c++";
-      }
-      {
-        name = "GEM_HOME";
-        eval = "$PRJ_DATA_DIR/ruby/bundle/$(ruby -e 'puts RUBY_VERSION')";
-      }
-      {
-        name = "PATH";
-        prefix = "$GEM_HOME/bin";
-      }
-    ];
+      };
+      GEM_HOME = {
+        value = "\${PRJ_DATA_DIR}/ruby/bundle/$(ruby -e 'puts RUBY_VERSION')";
+        eval = true;
+      };
+      PATH = {
+        value = "\${GEM_HOME}/bin";
+        prefix = true;
+      };
+    };
   };
 }

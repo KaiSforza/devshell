@@ -165,8 +165,7 @@ in
     ";
   };
 
-  config.env = optional cfg.enable {
-    name = "DEVSHELL_GIT_HOOKS_DIR";
-    value = hooksDir;
+  config.env = optionalAttrs cfg.enable {
+    DEVSHELL_GIT_HOOKS_DIR = {value = hooksDir;};
   };
 }

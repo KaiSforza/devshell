@@ -1,19 +1,18 @@
 # https://numtide.github.io/devshell
 # https://numtide.github.io/devshell/getting_started.html
-[[commands]]
+[commands.hello]
 package = "hello"
 
-[[commands]]
+[commands.go]
 package = "go"
 
-[[commands]]
+[commands.node]
 package = "nodejs_20"
 
-[[commands]]
+[commands.python]
 package = "python311"
 
-[[env]]
-name = "GO111MODULE"
+[env.GO111MODULE]
 value = "on"
 
 [devshell]
@@ -22,8 +21,7 @@ packages = [
   "memcached",
 ]
 
-[[commands]]
-name = "initPostgres"
+[commands.initPostgres]
 help = "Initialize the Postgres database"
 command = """\
   initdb pgdata; \

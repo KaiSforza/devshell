@@ -18,25 +18,13 @@ let
 
   pad = str: num: if num > 0 then pad "${str} " (num - 1) else str;
 
-  # Fallback to the package pname if the name is unset
-  resolveName =
-    cmd:
-    if cmd.name == null then
-      cmd.package.pname or (builtins.parseDrvName cmd.package.name).name
-    else
-      cmd.name;
-
   # Fill in default options for a command.
   commandToPackage =
+    name:
     cmd:
-    assert lib.assertMsg (cmd.command == null || cmd.name != cmd.command)
-      "[[commands]]: ${toString cmd.name} cannot be set to both the `name` and the `command` attributes. Did you mean to use the `package` attribute?";
-    assert lib.assertMsg (
-      cmd.package != null || (cmd.command != null && cmd.command != "")
-    ) "[[commands]]: ${resolveName cmd} expected either a command or package attribute.";
     if cmd.package == null then
       writeDefaultShellScript {
-        name = cmd.name;
+        name = name;
         text = cmd.command;
         binPrefix = true;
       }
@@ -47,62 +35,51 @@ let
     cmds:
     let
       cleanName =
-        { name, package, ... }@cmd:
-        assert lib.assertMsg (
-          cmd.name != null || cmd.package != null
-        ) "[[commands]]: some command is missing both a `name` or `package` attribute.";
-        let
-          name = resolveName cmd;
+        name: cmd:
+        cmd
+        // {
+          category = cmd.category or "general commands";
+          help = cmd.package.meta.description or cmd.help;
+        };
 
-          help = if cmd.help == null then cmd.package.meta.description or "" else cmd.help;
-        in
-        cmd // { inherit name help; };
+      commands = lib.mapAttrs cleanName cmds;
 
-      commands = map cleanName cmds;
-
-      commandLengths = map ({ name, ... }: builtins.stringLength name) commands;
-
-      maxCommandLength = builtins.foldl' (max: v: if v > max then v else max) 0 commandLengths;
+      maxCommandLength = foldl'
+        (m: v: if v > m then v else m)
+        0 (
+          map
+          (name: stringLength name)
+          (attrNames commands)
+        );
 
       commandCategories = lib.unique (
-        (zipAttrsWithNames [ "category" ] (name: vs: vs) commands).category
+        catAttrs "category" (attrValues commands)
       );
 
-      commandByCategoriesSorted = builtins.attrValues (
-        lib.genAttrs commandCategories (
-          category:
-          lib.nameValuePair category (
-            builtins.sort (a: b: a.name < b.name) (builtins.filter (x: x.category == category) commands)
-          )
-        )
+      commandByCategoriesSorted = lib.genAttrs commandCategories (
+        category:
+        lib.filterAttrs (_: x: x.category == category) commands
       );
 
       opCat =
-        kv:
+        category:
+        cmds:
         let
-          category = kv.name;
-          cmd = kv.value;
           opCmd =
-            { name, help, ... }:
+            name: cmd:
             let
-              len = maxCommandLength - (builtins.stringLength name);
+              len = maxCommandLength - (stringLength name);
             in
-            if help == null || help == "" then "  ${name}" else "  ${pad name len} - ${help}";
+            if cmd.help == null || cmd.help == ""
+              then "  ${name}"
+              else "  ${pad name len} - ${cmd.help}";
         in
-        "${ansi.bold}[${category}]${ansi.reset}\n" + builtins.concatStringsSep "\n" (map opCmd cmd);
+        "${ansi.bold}[${category}]${ansi.reset}\n" + concatStringsSep "\n" (attrValues (mapAttrs opCmd cmds));
     in
-    builtins.concatStringsSep "\n" (map opCat commandByCategoriesSorted) + "\n";
+    concatStringsSep "\n" (attrValues (mapAttrs opCat commandByCategoriesSorted)) + "\n";
 
   # These are all the options available for the commands.
   commandOptions = {
-    name = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = ''
-        Name of this command. Defaults to attribute name in commands.
-      '';
-    };
-
     category = mkOption {
       type = types.str;
       default = "[general commands]";
@@ -148,41 +125,38 @@ let
 in
 {
   options.commands = mkOption {
-    type = types.listOf (types.submodule { options = commandOptions; });
-    default = [ ];
+    type = types.attrsOf (types.submodule { options = commandOptions; });
+    default = {};
     description = ''
       Add commands to the environment.
     '';
     example = literalExpression ''
-      [
-        {
+      {
+        hello = {
           help = "print hello";
-          name = "hello";
           command = "echo hello";
-        }
-
-        {
+        };
+        nixpkgs-fmt = {
           package = "nixpkgs-fmt";
           category = "formatter";
-        }
-      ]
+        };
+      }
     '';
   };
 
-  config.commands = [
-    {
+  config.commands = {
+    menu = {
       help = "prints this menu";
-      name = "menu";
       command = ''
         cat <<'DEVSHELL_MENU'
         ${commandsToMenu config.commands}
         DEVSHELL_MENU
       '';
-    }
-  ];
+    };
+  };
 
   # Add the commands to the devshell packages. Either as wrapper scripts, or
   # the whole package.
-  config.devshell.packages = map commandToPackage config.commands;
+  config.devshell.packages = attrValues (mapAttrs commandToPackage config.commands);
   # config.devshell.motd = "$(motd)";
 }

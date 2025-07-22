@@ -57,9 +57,8 @@ let
       procfile = groupToProcfile gName g;
       description = if g.description == null then gName else g.description;
     in
-    [
-      {
-        name = "${gName}:start";
+    {
+      "${gname}:start" = {
         category = "service groups";
         help = "Start ${description} services";
         command =
@@ -82,9 +81,8 @@ let
             trap "on_stop" SIGINT SIGTERM SIGHUP EXIT
             wait $pid
           '').outPath;
-      }
-      {
-        name = "${gName}:stop";
+      };
+      "${gName}:stop" = {
         category = "service groups";
         help = "Stop ${description} services";
         command =
@@ -95,8 +93,8 @@ let
               rm "$PRJ_DATA_DIR/pids/${gName}.pid"
             fi
           '').outPath;
-      }
-    ];
+      };
+    };
 in
 {
   options.serviceGroups = mkOption {
@@ -107,7 +105,7 @@ in
     '';
   };
 
-  config.commands = foldl (l: r: l ++ r) [ ] (
+  config.commands = foldl (l: r: l // r) {} (
     mapAttrsToList (
       gName: g: groupToCommands (if g.name == null then gName else g.name) g
     ) config.serviceGroups

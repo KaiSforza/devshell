@@ -32,6 +32,7 @@ pkgs.lib.optionalAttrs (!pkgs.hostPlatform.isDarwin) {
       };
     in
     runTest "language-hare-2" { } ''
+      set -x
       # Load the devshell
       source ${shell}/env.bash
 

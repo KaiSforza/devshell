@@ -9,24 +9,22 @@
     let
       shell = devshell.mkShell {
         devshell.name = "devshell-env-1";
-        env = [
-          {
-            name = "HTTP_PORT";
+        env = {
+          HTTP_PORT = {
             value = 8080;
-          }
-          {
-            name = "PATH";
-            prefix = "bin";
-          }
-          {
-            name = "XDG_CACHE_DIR";
-            eval = "$PRJ_ROOT/$(echo .cache)";
-          }
-          {
-            name = "CARGO_HOME";
+          };
+          PATH = {
+            value = "bin";
+            prefix = true;
+          };
+          XDG_CACHE_DIR = {
+            value = "\${PRJ_ROOT}/$(echo .cache)";
+            eval = true;
+          };
+          CARGO_HOME = {
             unset = true;
-          }
-        ];
+          };
+        };
       };
     in
     runTest "devshell-env-1" { } ''
@@ -35,9 +33,6 @@
 
       # Load the devshell
       source ${shell}/env.bash
-
-      # NIXPKGS_PATH is being set
-      assert "$NIXPKGS_PATH" == "${toString pkgs.path}"
 
       assert "$XDG_DATA_DIRS" == "$DEVSHELL_DIR/share:/usr/local/share:/usr/share"
 

@@ -42,26 +42,25 @@ with lib;
         # Assume we want pkg-config, because it's good
         (lib.optionals hasIncludes ([ pkgs.pkg-config ] ++ (map lib.getDev cfg.includes)));
 
-    env =
-      (lib.optionals hasLibraries [
-        {
-          name = "LD_LIBRARY_PATH";
-          prefix = "$DEVSHELL_DIR/lib";
-        }
-        {
-          name = "LDFLAGS";
-          eval = "-L$DEVSHELL_DIR/lib";
-        }
-      ])
-      ++ lib.optionals hasIncludes [
-        {
-          name = "C_INCLUDE_PATH";
-          prefix = "$DEVSHELL_DIR/include";
-        }
-        {
-          name = "PKG_CONFIG_PATH";
-          prefix = "$DEVSHELL_DIR/lib/pkgconfig";
-        }
-      ];
+    env = (lib.optionalAttrs hasLibraries {
+      LD_LIBRARY_PATH = {
+        value = "\${DEVSHELL_DIR}/lib";
+        prefix = true;
+      };
+      LDFLAGS = {
+        value = "-L\${DEVSHELL_DIR}/lib";
+        eval = true;
+      };
+    })
+    // (lib.optionalAttrs hasIncludes {
+      C_INCLUDE_PATH = {
+        value = "\${DEVSHELL_DIR}/include";
+        prefix = true;
+      };
+      PKG_CONFIG_PATH = {
+        value = "\${DEVSHELL_DIR}/lib/pkgconfig";
+        prefix = true;
+      };
+    });
   };
 }

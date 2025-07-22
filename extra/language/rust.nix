@@ -39,36 +39,36 @@ with lib;
     devshell.packages =
       if cfg.enableDefaultToolchain then (map (tool: cfg.packageSet.${tool}) cfg.tools) else [ ];
     env =
-      [
-        {
-          # On darwin for example enables finding of libiconv
-          name = "LIBRARY_PATH";
+      {
+        # On darwin for example enables finding of libiconv
+        LIBRARY_PATH = {
           # append in case it needs to be modified
-          eval = "$DEVSHELL_DIR/lib";
-        }
-        {
-          # some *-sys crates require additional includes
-          name = "CFLAGS";
+          value = "\${DEVSHELL_DIR}/lib";
+          eval = true;
+        };
+        # some *-sys crates require additional includes
+        CFLAGS = {
           # append in case it needs to be modified
-          eval = "\"-I $DEVSHELL_DIR/include ${lib.optionalString pkgs.stdenv.isDarwin "-iframework $DEVSHELL_DIR/Library/Frameworks"}\"";
-        }
-      ]
-      ++ lib.optionals pkgs.stdenv.isDarwin [
-        {
+          value = "\"-I \${DEVSHELL_DIR}/include ${lib.optionalString pkgs.stdenv.isDarwin "-iframework \${DEVSHELL_DIR}/Library/Frameworks"}\"";
+          eval = true;
+        };
+      }
+      // lib.optionalAttrs pkgs.stdenv.isDarwin {
+        RUSTFLAGS = {
           # On darwin for example required for some *-sys crate compilation
-          name = "RUSTFLAGS";
           # append in case it needs to be modified
-          eval = "\"-L framework=$DEVSHELL_DIR/Library/Frameworks\"";
-        }
-        {
+          value = "\"-L framework=\${DEVSHELL_DIR}/Library/Frameworks\"";
+          eval = true;
+        };
+        RUSTDOCFLAGS = {
           # rustdoc uses a different set of flags
-          name = "RUSTDOCFLAGS";
           # append in case it needs to be modified
-          eval = "\"-L framework=$DEVSHELL_DIR/Library/Frameworks\"";
-        }
-        {
-          name = "PATH";
-          prefix =
+          value = "\"-L framework=\${DEVSHELL_DIR}/Library/Frameworks\"";
+          eval = true;
+        };
+        PATH = {
+          prefix = true;
+          value =
             let
               inherit (pkgs) xcbuild;
             in
@@ -76,15 +76,14 @@ with lib;
               xcbuild
               "${xcbuild}/Toolchains/XcodeDefault.xctoolchain"
             ];
-        }
-      ]
+        };
+      }
       # fenix provides '.rust-src' in the 'complete' toolchain configuration
-      ++ lib.optionals (cfg.enableDefaultToolchain && cfg.packageSet ? rust-src) [
-        {
+      // lib.optionalAttrs (cfg.enableDefaultToolchain && cfg.packageSet ? rust-src) {
+        RUST_SRC_PATH = {
           # rust-analyzer may use this to quicker find the rust source
-          name = "RUST_SRC_PATH";
           value = "${cfg.packageSet.rust-src}/lib/rustlib/src/rust/library";
-        }
-      ];
+        };
+      };
   };
 }

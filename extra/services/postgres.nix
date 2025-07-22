@@ -21,7 +21,7 @@ let
   '';
 
   setup-postgres = pkgs.writeShellScriptBin "setup-postgres" ''
-    set -euo pipefail
+    set -xeuo pipefail
     export PATH=${cfg.package}/bin:${pkgs.coreutils}/bin
 
     # Abort if the data dir already exists
@@ -29,16 +29,20 @@ let
 
     initdb ${concatStringsSep " " cfg.initdbArgs}
 
+    ${pkgs.ripgrep}/bin/rg unix_socket $PGDATA/postgresql.conf
+
+    env | ${pkgs.ripgrep}/bin/rg '^PG'
+
     cat >> "$PGDATA/postgresql.conf" <<EOF
-      listen_addresses = '''
-      unix_socket_directories = '$PGHOST'
+    listen_addresses = '''
+    unix_socket_directories = '$PGHOST'
     EOF
 
     ${createDB}
   '';
 
   start-postgres = pkgs.writeShellScriptBin "start-postgres" ''
-    set -euo pipefail
+    set -xeuo pipefail
     ${setup-postgres}/bin/setup-postgres
     exec ${cfg.package}/bin/postgres
   '';
@@ -82,33 +86,31 @@ in
       cfg.package
     ];
 
-    env = [
-      {
-        name = "PGDATA";
-        eval = "$PRJ_DATA_DIR/postgres";
-      }
-      {
-        name = "PGHOST";
-        eval = "$PGDATA";
-      }
-    ];
+    env = {
+      PGDATA = {
+        value = "\${PRJ_DATA_DIR:?}/postgres";
+        eval = true;
+      };
+      PGHOST = {
+        value = "\${PGDATA}";
+        eval = true;
+      };
+    };
 
     devshell.startup.setup-postgres.text = lib.optionalString cfg.setupPostgresOnStartup ''
       ${setup-postgres}/bin/setup-postgres
     '';
 
-    commands = [
-      {
-        name = "setup-postgres";
+    commands = {
+      setup-postgres = {
         package = setup-postgres;
         help = "Setup the postgres data directory";
-      }
-      {
-        name = "start-postgres";
+      };
+      start-postgres = {
         package = start-postgres;
         help = "Start the postgres server";
         category = "databases";
-      }
-    ];
+      };
+    };
   };
 }

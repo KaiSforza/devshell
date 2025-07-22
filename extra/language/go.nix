@@ -30,12 +30,11 @@ with lib;
   };
 
   config = {
-    env = [
-      {
-        name = "GO111MODULE";
+    env = {
+      GO111MODULE = {
         value = cfg.GO111MODULE;
-      }
-    ];
+      };
+    };
 
     devshell.packages = [ cfg.package ];
   };

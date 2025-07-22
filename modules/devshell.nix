@@ -70,13 +70,15 @@ let
   };
 
   # Write a bash profile to load
+  #${lib.optionalAttrs (cfg.prj_root_fallback != null) {PRJ_ROOT = cfg.prj_root_fallback;}}
   envBash = pkgs.writeText "devshell-env.bash" ''
     if [[ -n ''${IN_NIX_SHELL:-} || ''${DIRENV_IN_ENVRC:-} = 1 ]]; then
       # We know that PWD is always the current directory in these contexts
       PRJ_ROOT=$PWD
     elif [[ -z ''${PRJ_ROOT:-} ]]; then
-      ${lib.optionalString (cfg.prj_root_fallback != null) cfg.prj_root_fallback}
-
+      ${lib.optionalString
+        (cfg.prj_root_fallback != null)
+        (options.envToBash.default "PRJ_ROOT" cfg.prj_root_fallback.PRJ_ROOT)}
       if [[ -z "''${PRJ_ROOT:-}" ]]; then
         echo "ERROR: please set the PRJ_ROOT env var to point to the project root" >&2
         return 1
@@ -344,16 +346,12 @@ in
     };
 
     prj_root_fallback = mkOption {
-      type =
-        let
-          envType = options.env.type.nestedTypes.elemType;
-          coerceFunc = value: { inherit value; };
-        in
-        types.nullOr (types.coercedTo types.nonEmptyStr coerceFunc envType);
-      apply = x: if x == null then x else x // { name = "PRJ_ROOT"; };
-      default = {
-        eval = "$PWD";
-      };
+      #type = types.nullOr options.env.type.nestedTypes.elemType;
+      type = types.nullOr types.str;
+      apply = x: {PRJ_ROOT = {
+        value = x; eval = true; prefix = false; unset = false;
+      };};
+      default = "\${PRJ_ROOT:-\${PWD}}";
       example = lib.literalExpression ''
         {
           # Use the top-level directory of the working tree

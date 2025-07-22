@@ -25,18 +25,17 @@ in
     };
   };
   config.env =
-    lib.optional pkgs.stdenv.isLinux {
-      name = "LOCALE_ARCHIVE";
-      value = "${cfg.package}/lib/locale/locale-archive";
+    lib.optionalAttrs pkgs.stdenv.isLinux {
+      LOCALE_ARCHIVE = {
+        value = "${cfg.package}/lib/locale/locale-archive";
+      };
     }
-    ++ lib.optionals (cfg.lang != null) [
-      {
-        name = "LANG";
+    // lib.optionalAttrs (cfg.lang != null) {
+      LANG = {
         value = cfg.lang;
-      }
-      {
-        name = "LC_ALL";
+      };
+      LC_ALL = {
         value = cfg.lang;
-      }
-    ];
+      };
+    };
 }

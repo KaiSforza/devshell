@@ -34,16 +34,18 @@ with lib;
   };
 
   config = {
-    env = [
-      (mkIf (cfg.extraPackages != [ ]) {
-        name = "PERL5LIB";
-        prefix = pkgs.perlPackages.makeFullPerlPath cfg.extraPackages;
-      })
-      (mkIf (cfg.libraryPaths != [ ]) {
-        name = "PERL5LIB";
-        prefix = concatStringsSep ":" cfg.libraryPaths;
-      })
-    ];
+    env = (mkIf (cfg.extraPackages != [ ]) {
+      "PERL5LIB" = {
+        prefix = true;
+        value = pkgs.perlPackages.makeFullPerlPath cfg.extraPackages;
+      };
+    })
+    // (mkIf (cfg.libraryPaths != [ ]) {
+      PERL5LIB = {
+        value = concatStringsSep ":" cfg.libraryPaths;
+        prefix = true;
+      };
+    });
     devshell.packages = [ cfg.package ] ++ cfg.extraPackages;
   };
 }

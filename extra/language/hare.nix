@@ -43,20 +43,18 @@ with lib;
   };
 
   config = {
-    env = [
-      {
-        name = "HAREPATH";
-        value = lib.makeSearchPath "src/hare/stdlib" [ cfg.package ];
-      }
-      (mkIf (cfg.thirdPartyLibs != [ ]) {
-        name = "HAREPATH";
-        prefix = makeHareFullPath cfg.thirdPartyLibs;
-      })
-      (mkIf (cfg.vendoredLibs != [ ]) {
-        name = "HAREPATH";
-        prefix = concatStringsSep ":" cfg.vendoredLibs;
-      })
-    ];
+    env = lib.mkBefore {
+      HAREPATH = {
+        prefix = true;
+        value = lib.makeSearchPath "" (lib.reverseList ([
+          (lib.makeSearchPath "src/hare/stdlib" [ cfg.package ])
+        ] ++ (optional (cfg.thirdPartyLibs != [])
+          (makeHareFullPath cfg.thirdPartyLibs)
+        ) ++ (optional (cfg.vendoredLibs != [])
+          (concatStringsSep ":" cfg.vendoredLibs)
+        )));
+      };
+    };
     devshell.packages = [ cfg.package ];
   };
 }
