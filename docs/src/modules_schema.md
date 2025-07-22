@@ -787,7 +787,7 @@ package or string convertible to it
 **Default value**:
 
 ```nix
-<derivation go-1.22.5>
+<derivation go-1.24.4>
 ```
 
 **Example value**:
@@ -906,7 +906,7 @@ package or string convertible to it
 **Default value**:
 
 ```nix
-<derivation perl-5.38.2>
+<derivation perl-5.40.0>
 ```
 
 **Example value**:

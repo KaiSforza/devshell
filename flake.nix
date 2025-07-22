@@ -41,7 +41,9 @@
             text = ''
               cd docs
               cp ${devshell.modules-docs.markdown} src/modules_schema.md
-              mdbook serve
+              _cmd="''${1:-serve}"
+              shift
+              mdbook "$_cmd" "''${@}"
             '';
           };
           bench = pkgs.writeShellApplication {

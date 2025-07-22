@@ -44,13 +44,12 @@ jobs:
         with:
           name: kaisforza
       - run: |
-          nix build .#docs
-          cp -r "$(readlink ./result)" book
+          nix run .#docs -- build
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/attrs'
         uses: crazy-max/ghaction-github-pages@v4
         with:
           target_branch: gh-pages
-          build_dir: book
+          build_dir: docs/book
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
