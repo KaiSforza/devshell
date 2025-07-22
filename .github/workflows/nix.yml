@@ -8,22 +8,6 @@ on:
   pull_request:
   workflow_dispatch:
 jobs:
-  build:
-    strategy:
-      matrix:
-        os: [ ubuntu-24.04, ubuntu-24.04-arm ]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: cachix/install-nix-action@v30
-      - uses: cachix/cachix-action@v15
-        with:
-          name: kaisforza
-      - run: |
-          export PRJ_ROOT=$PWD
-          $(./shell.nix)/entrypoint --pure bash -c "echo OK"
-      - run: nix-shell --run "echo OK"
-      - run: nix-build
   flakes:
     strategy:
       matrix:
@@ -32,12 +16,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # Nix Flakes doesn't work on shallow clones
-          fetch-depth: 0
-      - uses: cachix/install-nix-action@v30
-      - uses: cachix/cachix-action@v15
-        with:
-          name: kaisforza
+          filter: blob:none
+      - uses: "DeterminateSystems/determinate-nix-action@v3"
       - run: nix flake check
       - name: Run devshell entry sanity checks
         run: |
@@ -57,12 +37,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          filter: blob:none
       - uses: cachix/install-nix-action@v30
       - uses: cachix/cachix-action@v15
         with:
           name: kaisforza
       - run: |
-          nix-build -A docs
+          nix build .#docs
           cp -r "$(readlink ./result)" book
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/attrs'

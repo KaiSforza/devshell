@@ -2,7 +2,7 @@
   description = "devshell";
   # To update all inputs:
   # nix flake update
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
   outputs =
     { self, nixpkgs }:
@@ -99,11 +99,11 @@
       templates = rec {
         toml = {
           path = ./templates/toml;
-          description = "nix flake new my-project -t github:numtide/devshell";
+          description = "nix flake new my-project -t github:kaisforza/devshell";
         };
         flake-parts = {
           path = ./templates/flake-parts;
-          description = "nix flake new my-project -t github:numtide/devshell#flake-parts";
+          description = "nix flake new my-project -t github:kaisforza/devshell#flake-parts";
         };
         default = toml;
       };
