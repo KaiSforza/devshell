@@ -1,5 +1,7 @@
 # Introducing Devshell: like virtualenv, for every language
 
+`attrSets` version.
+
 **STATUS: unstable**
 
 It should not take more than 10 minutes from the time you clone a repo and can
@@ -19,3 +21,10 @@ And it should keep the scope of these dependencies at the project level, just
 like virtualenv.
 
 These are the goals of this project.
+
+## MAJOR CHANGES
+
+This is a major departure from the `numtide/devshell`, using more attrsets
+instead of lists for variables and commands. This is a personal preference that
+will horribly break if you try to use this flake with something compatible with
+`numtide/devshell`

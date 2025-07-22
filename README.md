@@ -90,7 +90,7 @@ When running `nix-shell` or `nix develop`, `mkShell` prints a welcome message:
 
   hub           - github utility
 
-[devshell]$ 
+[devshell]$
 ```
 
 ### Configurable with a TOML file
@@ -127,7 +127,7 @@ nix run '.#<myapp>' -- <devshell-command> <and-args>
 This project itself exposes a Nix application; you can try it out with:
 
 ```sh
-nix run 'github:numtide/devshell' -- hello
+nix run 'github:KaiSforza/devshell/attrs' -- hello
 ```
 
 See [here](docs/src/flake-app.md) for more details.
@@ -165,6 +165,8 @@ A lot of things!
 1. Run `nix run .#bench`
 
 ## Commercial support
+
+WARN: (They will not support this, use their flake if you want enterprise support.)
 
 Looking for help or customization?
 

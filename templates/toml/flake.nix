@@ -1,7 +1,7 @@
 {
   description = "virtual environments";
 
-  inputs.devshell.url = "github:numtide/devshell";
+  inputs.devshell.url = "github:KaiSforza/devshell/attrs";
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   inputs.flake-compat = {

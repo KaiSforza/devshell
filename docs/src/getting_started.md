@@ -16,7 +16,7 @@ contain some nix code. Don't worry about the details.
 ```nix
 { system ? builtins.currentSystem }:
 let
-  src = fetchTarball "https://github.com/numtide/devshell/archive/main.tar.gz";
+  src = fetchTarball "https://github.com/KaiSforza/devshell/archive/attrs.tar.gz";
   devshell = import src { inherit system; };
 in
 devshell.fromTOML ./devshell.toml
@@ -52,7 +52,7 @@ For users of nix flakes, a default template is provided to get you up and
 running.
 
 ```sh
-nix flake new -t "github:numtide/devshell" project/
+nix flake new -t "github:KaiSforza/devshell/attrs" project/
 
 cd project/
 

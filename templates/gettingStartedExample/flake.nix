@@ -1,7 +1,7 @@
 {
   description = "getting started example";
 
-  inputs.devshell.url = "github:numtide/devshell";
+  inputs.devshell.url = "github:KaiSforza/devshell/attrs";
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   outputs =

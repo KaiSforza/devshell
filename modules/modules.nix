@@ -10,7 +10,7 @@ let
       # Configure modules-docs
       config.modules-docs.roots = [
         {
-          url = "https://github.com/KaiSforza/devshell";
+          url = "https://github.com/KaiSforza/devshell/attrs";
           path = toString ../.;
           branch = "attrs";
         }

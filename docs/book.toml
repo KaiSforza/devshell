@@ -1,5 +1,5 @@
 [book]
-authors = ["zimbatm"]
+authors = ["zimbatm", "KaiSforza"]
 language = "en"
 multilingual = false
 src = "src"
@@ -7,7 +7,8 @@ title = "devshell"
 
 [output.html]
 # Show github links in top bar
-git-repository-url = "https://github.com/numtide/devshell"
-edit-url-template = "https://github.com/numtide/devshell/edit/main/docs/{path}"
+git-repository-url = "https://github.com/KaiSforza/devshell"
+edit-url-template = "https://github.com/KaiSforza/devshell/edit/attrs/docs/{path}"
 additional-css = ["theme/pagetoc.css"]
 additional-js = ["theme/pagetoc.js"]
+fold.enable = true
