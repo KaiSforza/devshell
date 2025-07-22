@@ -1,4 +1,4 @@
-name: "Publish every Git push to attrs to FlakeHub"
+name: "Publish to flakehub"
 on:
   push:
     branches:
