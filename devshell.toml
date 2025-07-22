@@ -36,18 +36,22 @@ help = "prints hello"
 command = "echo hello"
 
 [commands.nixpkgs-fmt]
-package = "nixpkgs-fmt"
 category = "formatters"
+
+[commands.go]
 
 [commands.hub]
 help = "github utility"
-package = "gitAndTools.hub"
 category = "utilities"
 
 [commands.golangci-lint]
 help = "golang linter"
-package = "golangci-lint"
 category = "linters"
+
+[env]
+testStr = "foo"
+testInt = 123
+testBool = true
 
 [env.ZZZTEST_ENV]
 value = "${GO111MODULE:?}"

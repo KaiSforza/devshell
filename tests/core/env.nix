@@ -10,9 +10,7 @@
       shell = devshell.mkShell {
         devshell.name = "devshell-env-1";
         env = {
-          HTTP_PORT = {
-            value = 8080;
-          };
+          HTTP_PORT = 8080;
           PATH = {
             value = "bin";
             prefix = true;
@@ -24,11 +22,14 @@
           CARGO_HOME = {
             unset = true;
           };
+          UNSET = null;
+          _FALSE = false;
         };
       };
     in
     runTest "devshell-env-1" { } ''
       export CARGO_HOME=woot
+      export UNSET=toow
       unset XDG_DATA_DIRS
 
       # Load the devshell
@@ -39,6 +40,8 @@
       assert "$HTTP_PORT" == 8080
 
       assert "''${CARGO_HOME-not set}" == "not set"
+      assert "''${UNSET-not set}" == "not set"
+      assert "''${_FALSE}" == ""
 
       # PATH is prefixed with an expanded bin folder
       [[ $PATH == $PWD/bin:* ]]

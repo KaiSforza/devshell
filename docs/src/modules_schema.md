@@ -7,30 +7,28 @@ Add commands to the environment.
 **Type**:
 
 ```console
-list of (submodule)
+attrSet of (submodule)
 ```
 
 **Default value**:
 
 ```nix
-[ ]
+{ }
 ```
 
 **Example value**:
 
 ```nix
-[
-  {
+{
+  hello = {
     help = "print hello";
-    name = "hello";
     command = "echo hello";
-  }
+  };
 
-  {
-    package = "nixpkgs-fmt";
+  nixpkgs-fmt = {
     category = "formatter";
-  }
-]
+  };
+}
 ```
 
 **Declared in**:

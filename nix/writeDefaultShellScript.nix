@@ -13,18 +13,17 @@
   name,
   text,
   defaultShebang ? "#!${bash}/bin/bash\nset -euo pipefail\n",
-  checkPhase ? null,
-  binPrefix ? false,
+  destination ? "/bin/${name}",
+  checkPhase ? "",
+  meta ? { },
+  ...
 }:
 let
   script = if lib.hasPrefix "#!" text then text else "${defaultShebang}\n${text}";
 in
-writeTextFile (
-  {
-    inherit name;
-    text = script;
-    executable = true;
-  }
-  // (lib.optionalAttrs (checkPhase != null) { inherit checkPhase; })
-  // (lib.optionalAttrs binPrefix { destination = "/bin/${name}"; })
-)
+writeTextFile
+{
+  inherit name checkPhase destination meta;
+  text = script;
+  executable = true;
+}

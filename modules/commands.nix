@@ -22,11 +22,15 @@ let
   commandToPackage =
     name:
     cmd:
-    if cmd.package == null then
+    if cmd.package == null && cmd.command == null then
+      pkgs."${name}"
+    else if cmd.package == null then
       writeDefaultShellScript {
         name = name;
         text = cmd.command;
-        binPrefix = true;
+        destination = cmd.destination or "/bin/${name}";
+        checkPhase = cmd.checkPhase or "";
+        meta.description = cmd.help;
       }
     else
       cmd.package;
@@ -36,10 +40,13 @@ let
     let
       cleanName =
         name: cmd:
+        let
+          pkg = commandToPackage name cmd;
+        in
         cmd
         // {
           category = cmd.category or "general commands";
-          help = cmd.package.meta.description or cmd.help;
+          help = if cmd.help != null then cmd.help else pkg.meta.description or "";
         };
 
       commands = lib.mapAttrs cleanName cmds;
@@ -52,11 +59,12 @@ let
           (attrNames commands)
         );
 
-      commandCategories = lib.unique (
+      commandByCategories = lib.genAttrs (
+        lib.unique (
         catAttrs "category" (attrValues commands)
-      );
-
-      commandByCategoriesSorted = lib.genAttrs commandCategories (
+        )
+      )
+      (
         category:
         lib.filterAttrs (_: x: x.category == category) commands
       );
@@ -67,16 +75,13 @@ let
         let
           opCmd =
             name: cmd:
-            let
-              len = maxCommandLength - (stringLength name);
-            in
             if cmd.help == null || cmd.help == ""
               then "  ${name}"
-              else "  ${pad name len} - ${cmd.help}";
+              else "  ${pad name (maxCommandLength - (stringLength name))} - ${cmd.help}";
         in
-        "${ansi.bold}[${category}]${ansi.reset}\n" + concatStringsSep "\n" (attrValues (mapAttrs opCmd cmds));
+        "${ansi.bold}[${category}]${ansi.reset}\n" + concatStringsSep "\n" (lib.mapAttrsToList opCmd cmds);
     in
-    concatStringsSep "\n" (attrValues (mapAttrs opCat commandByCategoriesSorted)) + "\n";
+    concatStringsSep "\n" (lib.mapAttrsToList opCat commandByCategories) + "\n";
 
   # These are all the options available for the commands.
   commandOptions = {
@@ -121,30 +126,50 @@ let
         environment.
       '';
     };
+
+    checkPhase = mkOption {
+      type = types.nullOr types.str;
+      default = "";
+      description = ''
+        Run this shell script as a check.
+      '';
+    };
+  };
+
+  defaultShebang = mkOption {
+    type = types.oneOf [types.str or types.package];
+    default = "#!${lib.getExe pkgs.bash}\nset -euo pipefail\n";
+    description = "Set a different default shebang for all scripts.";
   };
 in
 {
-  options.commands = mkOption {
-    type = types.attrsOf (types.submodule { options = commandOptions; });
-    default = {};
-    description = ''
-      Add commands to the environment.
-    '';
-    example = literalExpression ''
-      {
-        hello = {
-          help = "print hello";
-          command = "echo hello";
-        };
-        nixpkgs-fmt = {
-          package = "nixpkgs-fmt";
-          category = "formatter";
-        };
-      }
-    '';
+  options = {
+    inherit defaultShebang;
+    commands = mkOption {
+      type = types.attrsOf (types.submodule { options = commandOptions; });
+      default = {};
+      description = ''
+        Add commands to the environment.
+      '';
+      example = literalExpression ''
+        {
+          hello = {
+            help = "print hello";
+            command = "echo hello";
+          };
+          nixpkgs-fmt = {
+            category = "formatter";
+          };
+          foo = {
+            package = pkgs.hello;
+          };
+        }
+      '';
+    };
   };
+  config.defaultShebang = defaultShebang.default;
 
-  config.commands = {
+  config.commands = optionalAttrs (config.defaultShebang == defaultShebang.default) {
     menu = {
       help = "prints this menu";
       command = ''
@@ -157,6 +182,5 @@ in
 
   # Add the commands to the devshell packages. Either as wrapper scripts, or
   # the whole package.
-  config.devshell.packages = attrValues (mapAttrs commandToPackage config.commands);
-  # config.devshell.motd = "$(motd)";
+  config.devshell.packages = lib.mapAttrsToList commandToPackage config.commands;
 }

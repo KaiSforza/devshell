@@ -10,9 +10,9 @@ let
       # Configure modules-docs
       config.modules-docs.roots = [
         {
-          url = "https://github.com/numtide/devshell";
+          url = "https://github.com/KaiSforza/devshell";
           path = toString ../.;
-          branch = "main";
+          branch = "attrs";
         }
       ];
     }

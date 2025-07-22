@@ -26,6 +26,7 @@
             '';
           };
           git = { package = "git"; };
+          zsh = { };
         };
       };
     in
@@ -39,8 +40,10 @@
       type -p bash-script
       type -p python-script
       type -p git
+      type -p zsh
 
       assert "$(bash-script)" == hello-bash
+      assert "$(zsh -c 'echo $ZSH_NAME')" == zsh
 
       # Check that the shebang is correct. We can't execute it inside of the
       # sandbox because /usr/bin/env doesn't exist.

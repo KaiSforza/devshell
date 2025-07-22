@@ -4,7 +4,7 @@
 package = "hello"
 
 [commands.go]
-package = "go"
+# Uses the `go` package automatically
 
 [commands.node]
 package = "nodejs_20"

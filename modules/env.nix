@@ -60,30 +60,35 @@ let
     name:
     args':
     let
-      args = {eval = false; prefix = false; unset = false;} // args';
+      args = {eval = false; prefix = false; unset = false;} //
+        (if (typeOf args') != "set" then
+          (optionalAttrs (args' == null) {unset = true;})
+          // {value = args';}
+        else args');
       value = args.value or null;
       valType = if args.unset || value == null then "unset"
         else if args.prefix then "prefix"
         else if args.eval then "eval"
         else "value";
+      outstrs = {
+        value = "export ${name}=${escapeShellArg (toString value)}";
+        eval = "export ${name}=${toString value}";
+        prefix = ''export ${name}="$(${pkgs.coreutils}/bin/realpath --canonicalize-missing "${toString value}")"''${${name}+:''${${name}}}'';
+        unset = ''unset ${name}'';
+      };
     in
     (
       assert assertMsg (
         !(name == "PATH" && ! args.prefix)
       ) "[[environ]]: ${name} should not override the value. Use 'prefix' instead.";
-      {
-        value = "export ${name}=${escapeShellArg (toString value)}";
-        eval = "export ${name}=${toString value}";
-        prefix = ''export ${name}="$(${pkgs.coreutils}/bin/realpath --canonicalize-missing "${toString value}")"''${${name}+:''${${name}}}'';
-        unset = ''unset ${name}'';
-      }."${valType}"
+      outstrs."${valType}"
     );
   compareEnvs = left: right: let
-    name' = match "^export ([^ =]+).*$" (left);
+    name' = match "^export ([^ =]+).*$" left;
     name = if name' == [] || name' == null then "" else head name';
-    valname' = match "^export ([^ =]+).*$" (right);
+    valname' = match "^export ([^ =]+).*$" right;
     valname = if valname' == [] || valname' == null then "" else head valname';
-    vals = match "^export [^=]+=(.*)$" (right);
+    vals = match "^export [^=]+=(.*)$" right;
     # Flatten it 2 layers to get the actual matches.
     innerVals = filter (x: x != valname) (
       lib.flatten (
@@ -123,12 +128,6 @@ in
     default = envToBash;
     description = "Function used to translate this submodule to Bash code";
   };
-  options.compareEnvs = mkOption {
-    internal = true;
-    readOnly = true;
-    default = compareEnvs;
-    description = "Testing";
-  };
 
   options.env = let
     defopts = {
@@ -147,18 +146,36 @@ in
       };
     };
   in mkOption {
-    type = types.attrsOf (types.submodule { options = envOptions; });
+    type = with types; attrsOf (nullOr (oneOf [
+      (submodule { options = envOptions; })
+      str
+      int
+      bool
+      package
+    ]));
     apply = x: defopts // x;
     default = defopts;
     description = ''
       Add environment variables to the shell. eval's MUST be in curly braces.
+
+      Ordering will be set based the detected 'dependencies'. Variables will be
+      checked for any sub-variables (`''${...}`) and will be set after those sub-
+      variables are set.
+
+      note: There is a change in behavior here. Because this is an attrSet now
+      you cannot define the same variable twice and use `prefix = true`. The
+      prefix will still work for default variables, like `$PATH` or whatever, but
+      variable values should be combined in nix, not in the shell.
     '';
     example = literalExpression ''
       {
         HTTP_PORT = { value = 8080; };
+        HTTP_REMOTE_PORT = 8081;
         PATH = { prefix = true; value = "bin"; };
         XDG_CACHE_DIR = { eval = true; value = "\''${PRJ_ROOT}/.cache"; };
-        CARGO_HOME = { value = null; };
+        CARGO_HOME = null;
+        EMPTY_VALUE = false;
+        ALSO_EMPTY_VALUE = "";
       }
     '';
   };
