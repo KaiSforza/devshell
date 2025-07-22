@@ -1,11 +1,7 @@
 # A standalone source filtering library
 let
   inherit (builtins)
-    any
     isFunction
-    isString
-    isPath
-    map
     stringLength
     substring
     ;

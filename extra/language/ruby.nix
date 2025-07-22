@@ -40,15 +40,9 @@ with lib;
       gnumake
     ];
     env = {
-      CC = {
-        value = "cc";
-      };
-      CPP = {
-        value = "cpp";
-      };
-      CXX = {
-        value = "c++";
-      };
+      CC = "cc";
+      CPP = "cpp";
+      CXX = "c++";
       GEM_HOME = {
         value = "\${PRJ_DATA_DIR}/ruby/bundle/$(ruby -e 'puts RUBY_VERSION')";
         eval = true;

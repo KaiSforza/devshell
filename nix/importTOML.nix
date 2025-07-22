@@ -8,7 +8,6 @@ let
       data = builtins.fromTOML (builtins.readFile file);
 
       extraModulesPath = toString ../extra;
-      extraModules = builtins.readDir extraModulesPath;
 
       importModule =
         str:

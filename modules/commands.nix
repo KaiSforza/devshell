@@ -123,7 +123,8 @@ let
       default = null;
       description = ''
         Used to bring in a specific package. This package will be added to the
-        environment.
+        environment. Useful if the package name doesn't map onto the main
+        executable name, such as with `openssh` and `ssh`.
       '';
     };
 
@@ -131,25 +132,21 @@ let
       type = types.nullOr types.str;
       default = "";
       description = ''
-        Run this shell script as a check.
+        Run this shell script as a check when building a custom command.
+
+        Only works if you use the `command` option as a string.
       '';
     };
-  };
-
-  defaultShebang = mkOption {
-    type = types.oneOf [types.str or types.package];
-    default = "#!${lib.getExe pkgs.bash}\nset -euo pipefail\n";
-    description = "Set a different default shebang for all scripts.";
   };
 in
 {
   options = {
-    inherit defaultShebang;
     commands = mkOption {
       type = types.attrsOf (types.submodule { options = commandOptions; });
       default = {};
       description = ''
-        Add commands to the environment.
+        Add commands to the environment. Can be used to add packages that will
+        be documented in the `menu` command.
       '';
       example = literalExpression ''
         {
@@ -163,13 +160,13 @@ in
           foo = {
             package = pkgs.hello;
           };
+          zsh = { };
         }
       '';
     };
   };
-  config.defaultShebang = defaultShebang.default;
 
-  config.commands = optionalAttrs (config.defaultShebang == defaultShebang.default) {
+  config.commands = {
     menu = {
       help = "prints this menu";
       command = ''

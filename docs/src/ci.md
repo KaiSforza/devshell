@@ -21,8 +21,7 @@ For example, let's say that `make` is being used to build the project.
 
 The `devshell.toml` would have it as part of its commands:
 ```toml
-[[commands]]
-package = "gnumake"
+[commands.gnumake]
 ```
 
 All the CI has to do, is this: `nix-shell --run "$(nix-build shell.nix)/entrypoint make"`.
@@ -74,8 +73,7 @@ The [`hci` command](https://docs.hercules-ci.com/hercules-ci-agent/hci/) is avai
 
 `devshell.toml`
 ```
-[[commands]]
-package = "hci"
+[commands.hci]
 ```
 
 Use [`hci effect run`](https://docs.hercules-ci.com/hercules-ci-agent/hci/). Following the previous example:
@@ -141,4 +139,3 @@ jobs:
 ## TODO
 
 Add more CI-specific examples.
-

@@ -1,7 +1,7 @@
 {
-  pkgs,
   devshell,
   runTest,
+  ...
 }:
 {
   modules-docs-1 =

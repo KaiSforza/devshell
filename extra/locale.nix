@@ -31,11 +31,7 @@ in
       };
     }
     // lib.optionalAttrs (cfg.lang != null) {
-      LANG = {
-        value = cfg.lang;
-      };
-      LC_ALL = {
-        value = cfg.lang;
-      };
+      LANG = cfg.lang;
+      LC_ALL = cfg.lang;
     };
 }

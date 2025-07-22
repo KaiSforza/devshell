@@ -6,7 +6,6 @@
   pkgs,
   options,
   config,
-  modulesPath,
   ...
 }:
 with lib;

@@ -41,9 +41,7 @@ building '/nix/store/8027cgy3xcinb59aaynh899q953dnzms-devshell-bin.drv'...
 building '/nix/store/w33zl180ni880p18sls5ykih88zkmkqk-devshell.drv'...
 warning: you did not specify '--add-root'; the result might be removed by the garbage collector
 🔨 Welcome to devshell
-
 [general commands]
-
   menu - prints this menu
 
 [devshell]$
@@ -67,24 +65,32 @@ Find `templates/gettingStartedExample` in this repository for a working example 
 ## Adding environment variables
 
 Environment variables that are specific to the project can be added with the
-`[[env]]` declaration. Each environment variable is an entry in an array, and
-will be set in the order that they are declared.
+`[env.NAME]` declaration. Each environment variable is a subtable or value
+under the `env` key.
 
 Eg:
 
 ```toml
-[[env]]
-name = "GO111MODULE"
+[env]
+PORT_NUM = 8080
+[env.GO111MODULE]
 value = "on"
 ```
 
 There are different ways to set the environment variables. Look at the schema
 to find all the ways. But in short:
-* Use the `value` key to set a fixed env var.
-* Use the `eval` key to evaluate the value. This is useful when one env var
-  depends on the value of another.
-* Use the `prefix` key to prepend a path to an environment variable that uses
-  the path separator. Like `PATH`.
+* Use the `value` key to set the value of the variable.
+* Set the `eval` key to `true` to allow parsing of `${}` variables.
+* Set the `prefix` key to `true` to prepend a path to an environment variable
+  that uses the path separator. Like `PATH`.
+
+The simplified syntax allows you to simply set `NAME = ...`. These values will
+not be expanded, and will be raw strings. Settings `NAME = null` is a shortcut
+that allows you to unset the variable.
+
+Because this is a table/attrset, you cannot define the same value multiple
+times. If you need that functionality (multiple prefixes on a variable) then
+you can use the nix file setup.
 
 ## Adding new commands
 
@@ -93,17 +99,18 @@ displayed on devshell entry so that the user knows what commands are available
 to them.
 
 In order to bring in new dependencies, you can either add them to
-`devshell.packages` or as an entry in the `[[commands]]` list (see [TOML docs](https://toml.io/en/v1.0.0#array-of-tables)). Commands are also added to the
-menu so they might be preferable for discoverability.
+`devshell.packages` or as an entry in the `[commands]` table (see [TOML docs](https://toml.io/en/v1.0.0#tables)).
+Commands are also added to the menu so they might be preferable for
+discoverability.
 
 As an exercise, add the following snippet to your `devshell.toml`:
 
 ```toml
-[[commands]]
-package = "go"
+[commands.go]
 ```
 
-Then re-enter the shell with `nix-shell`/`nix develop`/`direnv reload`. You should see something like this:
+Then re-enter the shell with `nix-shell`/`nix develop`/`direnv reload`. You
+should see something like this:
 
 ```console
 $ nix-shell
@@ -120,9 +127,7 @@ building '/nix/store/8027cgy3xcinb59aaynh899q953dnzms-devshell-bin.drv'...
 building '/nix/store/w33zl180ni880p18sls5ykih88zkmkqk-devshell.drv'...
 warning: you did not specify '--add-root'; the result might be removed by the garbage collector
 🔨 Welcome to devshell
-
 [general commands]
-
   menu - prints this menu
   go   - The Go Programming language
 
@@ -148,8 +153,8 @@ Check out the [Nix package repository](https://search.nixos.org/packages).
 
 Note that it is also possible to **use specific versions** for some packages - e.g. for NodeJS, [search the repo](https://search.nixos.org/packages?type=packages&query=nodejs) & use like this:
 ```toml
-[[commands]]
-package = "nodejs-17_x" # https://search.nixos.org/packages?type=packages&query=nodejs
+[commands.node]
+package = "nodejs-22_x" # https://search.nixos.org/packages?type=packages&query=nodejs
 name = "node"
 help = "NodeJS"
 ```
@@ -158,7 +163,6 @@ Or another example:
 ```toml
 [devshell]
 packages = [
-  "python27", # 2.7
   "python311", # 3.11
 ]
 ```

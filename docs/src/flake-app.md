@@ -33,14 +33,11 @@ For example, given the following `flake.nix`:
           };
         in
         pkgs.devshell.mkShell ({ config, ... }: {
-          commands = [
-            {
-              name = "greet";
-              command = ''
-                printf -- 'Hello, %s!\n' "''${1:-world}"
-              '';
-            }
-          ];
+          commands.greet = {
+            command = ''
+              printf -- 'Hello, %s!\n' "''${1:-world}"
+            '';
+          };
         });
     });
 }

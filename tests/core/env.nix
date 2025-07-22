@@ -1,5 +1,4 @@
 {
-  pkgs,
   devshell,
   runTest,
 }:

@@ -2,12 +2,13 @@
 
 ### `commands`
 
-Add commands to the environment.
+Add commands to the environment. Can be used to add packages that will
+be documented in the `menu` command.
 
 **Type**:
 
 ```console
-attrSet of (submodule)
+attribute set of (submodule)
 ```
 
 **Default value**:
@@ -24,21 +25,25 @@ attrSet of (submodule)
     help = "print hello";
     command = "echo hello";
   };
-
   nixpkgs-fmt = {
     category = "formatter";
   };
+  foo = {
+    package = pkgs.hello;
+  };
+  zsh = { };
 }
 ```
 
 **Declared in**:
 
-- [modules/commands.nix](https://github.com/numtide/devshell/tree/main/modules/commands.nix)
+- [modules/commands.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/commands.nix)
 
-### `commands.*.package`
+### `commands.<name>.package`
 
 Used to bring in a specific package. This package will be added to the
-environment.
+environment. Useful if the package name doesn't map onto the main
+executable name, such as with `openssh` and `ssh`.
 
 **Type**:
 
@@ -54,9 +59,9 @@ null
 
 **Declared in**:
 
-- [modules/commands.nix](https://github.com/numtide/devshell/tree/main/modules/commands.nix)
+- [modules/commands.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/commands.nix)
 
-### `commands.*.category`
+### `commands.<name>.category`
 
 Set a free text category under which this command is grouped
 and shown in the help menu.
@@ -75,9 +80,31 @@ string
 
 **Declared in**:
 
-- [modules/commands.nix](https://github.com/numtide/devshell/tree/main/modules/commands.nix)
+- [modules/commands.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/commands.nix)
 
-### `commands.*.command`
+### `commands.<name>.checkPhase`
+
+Run this shell script as a check when building a custom command.
+
+Only works if you use the `command` option as a string.
+
+**Type**:
+
+```console
+null or string
+```
+
+**Default value**:
+
+```nix
+""
+```
+
+**Declared in**:
+
+- [modules/commands.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/commands.nix)
+
+### `commands.<name>.command`
 
 If defined, it will add a script with the name of the command, and the
 content of this value.
@@ -108,9 +135,9 @@ null
 
 **Declared in**:
 
-- [modules/commands.nix](https://github.com/numtide/devshell/tree/main/modules/commands.nix)
+- [modules/commands.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/commands.nix)
 
-### `commands.*.help`
+### `commands.<name>.help`
 
 Describes what the command does in one line of text.
 
@@ -128,27 +155,7 @@ null
 
 **Declared in**:
 
-- [modules/commands.nix](https://github.com/numtide/devshell/tree/main/modules/commands.nix)
-
-### `commands.*.name`
-
-Name of this command. Defaults to attribute name in commands.
-
-**Type**:
-
-```console
-null or string
-```
-
-**Default value**:
-
-```nix
-null
-```
-
-**Declared in**:
-
-- [modules/commands.nix](https://github.com/numtide/devshell/tree/main/modules/commands.nix)
+- [modules/commands.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/commands.nix)
 
 ### `devshell.packages`
 
@@ -171,7 +178,7 @@ list of (package or string convertible to it)
 
 **Declared in**:
 
-- [modules/devshell.nix](https://github.com/numtide/devshell/tree/main/modules/devshell.nix)
+- [modules/devshell.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/devshell.nix)
 
 ### `devshell.packagesFrom`
 
@@ -192,7 +199,7 @@ list of (package or string convertible to it)
 
 **Declared in**:
 
-- [modules/devshell.nix](https://github.com/numtide/devshell/tree/main/modules/devshell.nix)
+- [modules/devshell.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/devshell.nix)
 
 ### `devshell.interactive.<name>.deps`
 
@@ -212,7 +219,7 @@ list of string
 
 **Declared in**:
 
-- [modules/devshell.nix](https://github.com/numtide/devshell/tree/main/modules/devshell.nix)
+- [modules/devshell.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/devshell.nix)
 
 ### `devshell.interactive.<name>.text`
 
@@ -226,7 +233,7 @@ string
 
 **Declared in**:
 
-- [modules/devshell.nix](https://github.com/numtide/devshell/tree/main/modules/devshell.nix)
+- [modules/devshell.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/devshell.nix)
 
 ### `devshell.load_profiles`
 
@@ -251,7 +258,7 @@ true
 
 **Declared in**:
 
-- [modules/devshell.nix](https://github.com/numtide/devshell/tree/main/modules/devshell.nix)
+- [modules/devshell.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/devshell.nix)
 
 ### `devshell.meta`
 
@@ -271,7 +278,7 @@ attribute set of anything
 
 **Declared in**:
 
-- [modules/devshell.nix](https://github.com/numtide/devshell/tree/main/modules/devshell.nix)
+- [modules/devshell.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/devshell.nix)
 
 ### `devshell.motd`
 
@@ -299,7 +306,7 @@ string
 
 **Declared in**:
 
-- [modules/devshell.nix](https://github.com/numtide/devshell/tree/main/modules/devshell.nix)
+- [modules/devshell.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/devshell.nix)
 
 ### `devshell.name`
 
@@ -319,7 +326,7 @@ string
 
 **Declared in**:
 
-- [modules/devshell.nix](https://github.com/numtide/devshell/tree/main/modules/devshell.nix)
+- [modules/devshell.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/devshell.nix)
 
 ### `devshell.prj_root_fallback`
 
@@ -340,15 +347,13 @@ options list (except that the 'name' field is ignored).
 **Type**:
 
 ```console
-null or ((submodule) or non-empty string convertible to it)
+null or string
 ```
 
 **Default value**:
 
 ```nix
-{
-  eval = "$PWD";
-}
+"\${PRJ_ROOT:-\${PWD}}"
 ```
 
 **Example value**:
@@ -362,120 +367,7 @@ null or ((submodule) or non-empty string convertible to it)
 
 **Declared in**:
 
-- [modules/devshell.nix](https://github.com/numtide/devshell/tree/main/modules/devshell.nix)
-
-### `devshell.prj_root_fallback.eval`
-
-Like value but not evaluated by Bash. This allows to inject other
-variable names or even commands using the `$()` notation.
-
-**Type**:
-
-```console
-null or string
-```
-
-**Default value**:
-
-```nix
-null
-```
-
-**Example value**:
-
-```nix
-"$OTHER_VAR"
-```
-
-**Declared in**:
-
-- [modules/env.nix](https://github.com/numtide/devshell/tree/main/modules/env.nix)
-
-### `devshell.prj_root_fallback.name`
-
-Name of the environment variable
-**Type**:
-
-```console
-string
-```
-
-**Declared in**:
-
-- [modules/env.nix](https://github.com/numtide/devshell/tree/main/modules/env.nix)
-
-### `devshell.prj_root_fallback.prefix`
-
-Prepend to PATH-like environment variables.
-
-For example name = "PATH"; prefix = "bin"; will expand the path of
-./bin and prepend it to the PATH, separated by ':'.
-
-**Type**:
-
-```console
-null or string
-```
-
-**Default value**:
-
-```nix
-null
-```
-
-**Example value**:
-
-```nix
-"bin"
-```
-
-**Declared in**:
-
-- [modules/env.nix](https://github.com/numtide/devshell/tree/main/modules/env.nix)
-
-### `devshell.prj_root_fallback.unset`
-
-Whether to enable unsets the variable.
-**Type**:
-
-```console
-boolean
-```
-
-**Default value**:
-
-```nix
-false
-```
-
-**Example value**:
-
-```nix
-true
-```
-
-**Declared in**:
-
-- [modules/env.nix](https://github.com/numtide/devshell/tree/main/modules/env.nix)
-
-### `devshell.prj_root_fallback.value`
-
-Shell-escaped value to set
-**Type**:
-
-```console
-null or string or signed integer or boolean or package
-```
-
-**Default value**:
-
-```nix
-null
-```
-
-**Declared in**:
-
-- [modules/env.nix](https://github.com/numtide/devshell/tree/main/modules/env.nix)
+- [modules/devshell.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/devshell.nix)
 
 ### `devshell.startup.<name>.deps`
 
@@ -495,7 +387,7 @@ list of string
 
 **Declared in**:
 
-- [modules/devshell.nix](https://github.com/numtide/devshell/tree/main/modules/devshell.nix)
+- [modules/devshell.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/devshell.nix)
 
 ### `devshell.startup.<name>.text`
 
@@ -509,163 +401,63 @@ string
 
 **Declared in**:
 
-- [modules/devshell.nix](https://github.com/numtide/devshell/tree/main/modules/devshell.nix)
+- [modules/devshell.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/devshell.nix)
 
 ### `env`
 
-Add environment variables to the shell.
+Add environment variables to the shell. eval's MUST be in curly braces.
+
+Ordering will be set based the detected 'dependencies'. Variables will be
+checked for any sub-variables (`${...}`) and will be set after those sub-
+variables are set.
+
+note: There is a change in behavior here. Because this is an attrSet now
+you cannot define the same variable twice and use `prefix = true`. The
+prefix will still work for default variables, like `$PATH` or whatever, but
+variable values should be combined in nix, not in the shell.
 
 **Type**:
 
 ```console
-list of (submodule)
+attribute set of (null or (submodule) or string or signed integer or boolean or package)
 ```
 
 **Default value**:
 
 ```nix
-[ ]
+{
+  PRJ_DATA_DIR = {
+    eval = true;
+    value = "\${PRJ_DATA_DIR:-\${PRJ_ROOT}/.data}";
+  };
+  PRJ_ROOT = {
+    eval = true;
+    value = "\${PRJ_ROOT:-PWD}";
+  };
+  XDG_DATA_DIRS = {
+    eval = true;
+    value = "\${DEVSHELL_DIR}/share:\${XDG_DATA_DIRS:-/usr/local/share:/usr/share}";
+  };
+}
 ```
 
 **Example value**:
 
 ```nix
-[
-  {
-    name = "HTTP_PORT";
-    value = 8080;
-  }
-  {
-    name = "PATH";
-    prefix = "bin";
-  }
-  {
-    name = "XDG_CACHE_DIR";
-    eval = "$PRJ_ROOT/.cache";
-  }
-  {
-    name = "CARGO_HOME";
-    unset = true;
-  }
-]
+{
+  HTTP_PORT = { value = 8080; };
+  HTTP_REMOTE_PORT = 8081;
+  PATH = { prefix = true; value = "bin"; };
+  XDG_CACHE_DIR = { eval = true; value = "\${PRJ_ROOT}/.cache"; };
+  CARGO_HOME = null;
+  EMPTY_VALUE = false;
+  ALSO_EMPTY_VALUE = "";
+}
 ```
 
 **Declared in**:
 
-- [modules/env.nix](https://github.com/numtide/devshell/tree/main/modules/env.nix)
-
-### `env.*.eval`
-
-Like value but not evaluated by Bash. This allows to inject other
-variable names or even commands using the `$()` notation.
-
-**Type**:
-
-```console
-null or string
-```
-
-**Default value**:
-
-```nix
-null
-```
-
-**Example value**:
-
-```nix
-"$OTHER_VAR"
-```
-
-**Declared in**:
-
-- [modules/env.nix](https://github.com/numtide/devshell/tree/main/modules/env.nix)
-
-### `env.*.name`
-
-Name of the environment variable
-**Type**:
-
-```console
-string
-```
-
-**Declared in**:
-
-- [modules/env.nix](https://github.com/numtide/devshell/tree/main/modules/env.nix)
-
-### `env.*.prefix`
-
-Prepend to PATH-like environment variables.
-
-For example name = "PATH"; prefix = "bin"; will expand the path of
-./bin and prepend it to the PATH, separated by ':'.
-
-**Type**:
-
-```console
-null or string
-```
-
-**Default value**:
-
-```nix
-null
-```
-
-**Example value**:
-
-```nix
-"bin"
-```
-
-**Declared in**:
-
-- [modules/env.nix](https://github.com/numtide/devshell/tree/main/modules/env.nix)
-
-### `env.*.unset`
-
-Whether to enable unsets the variable.
-**Type**:
-
-```console
-boolean
-```
-
-**Default value**:
-
-```nix
-false
-```
-
-**Example value**:
-
-```nix
-true
-```
-
-**Declared in**:
-
-- [modules/env.nix](https://github.com/numtide/devshell/tree/main/modules/env.nix)
-
-### `env.*.value`
-
-Shell-escaped value to set
-**Type**:
-
-```console
-null or string or signed integer or boolean or package
-```
-
-**Default value**:
-
-```nix
-null
-```
-
-**Declared in**:
-
-- [modules/env.nix](https://github.com/numtide/devshell/tree/main/modules/env.nix)
+- [modules/env.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/env.nix)
 
 ### `extra.locale.package`
 
@@ -684,7 +476,7 @@ package
 
 **Declared in**:
 
-- [extra/locale.nix](https://github.com/numtide/devshell/tree/main/extra/locale.nix)
+- [extra/locale.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/locale.nix)
 
 ### `extra.locale.lang`
 
@@ -709,7 +501,7 @@ null
 
 **Declared in**:
 
-- [extra/locale.nix](https://github.com/numtide/devshell/tree/main/extra/locale.nix)
+- [extra/locale.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/locale.nix)
 
 ### `git.hooks.enable`
 
@@ -734,7 +526,7 @@ true
 
 **Declared in**:
 
-- [extra/git/hooks.nix](https://github.com/numtide/devshell/tree/main/extra/git/hooks.nix)
+- [extra/git/hooks.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/git/hooks.nix)
 
 ### `git.hooks.applypatch-msg.text`
 
@@ -753,7 +545,7 @@ string
 
 **Declared in**:
 
-- [extra/git/hooks.nix](https://github.com/numtide/devshell/tree/main/extra/git/hooks.nix)
+- [extra/git/hooks.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/git/hooks.nix)
 
 ### `git.hooks.commit-msg.text`
 
@@ -772,7 +564,7 @@ string
 
 **Declared in**:
 
-- [extra/git/hooks.nix](https://github.com/numtide/devshell/tree/main/extra/git/hooks.nix)
+- [extra/git/hooks.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/git/hooks.nix)
 
 ### `git.hooks.fsmonitor-watchman.text`
 
@@ -791,7 +583,7 @@ string
 
 **Declared in**:
 
-- [extra/git/hooks.nix](https://github.com/numtide/devshell/tree/main/extra/git/hooks.nix)
+- [extra/git/hooks.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/git/hooks.nix)
 
 ### `git.hooks.post-update.text`
 
@@ -810,7 +602,7 @@ string
 
 **Declared in**:
 
-- [extra/git/hooks.nix](https://github.com/numtide/devshell/tree/main/extra/git/hooks.nix)
+- [extra/git/hooks.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/git/hooks.nix)
 
 ### `git.hooks.pre-applypatch.text`
 
@@ -829,7 +621,7 @@ string
 
 **Declared in**:
 
-- [extra/git/hooks.nix](https://github.com/numtide/devshell/tree/main/extra/git/hooks.nix)
+- [extra/git/hooks.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/git/hooks.nix)
 
 ### `git.hooks.pre-commit.text`
 
@@ -848,7 +640,7 @@ string
 
 **Declared in**:
 
-- [extra/git/hooks.nix](https://github.com/numtide/devshell/tree/main/extra/git/hooks.nix)
+- [extra/git/hooks.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/git/hooks.nix)
 
 ### `git.hooks.pre-merge-commit.text`
 
@@ -867,7 +659,7 @@ string
 
 **Declared in**:
 
-- [extra/git/hooks.nix](https://github.com/numtide/devshell/tree/main/extra/git/hooks.nix)
+- [extra/git/hooks.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/git/hooks.nix)
 
 ### `git.hooks.pre-push.text`
 
@@ -886,7 +678,7 @@ string
 
 **Declared in**:
 
-- [extra/git/hooks.nix](https://github.com/numtide/devshell/tree/main/extra/git/hooks.nix)
+- [extra/git/hooks.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/git/hooks.nix)
 
 ### `git.hooks.pre-rebase.text`
 
@@ -905,7 +697,7 @@ string
 
 **Declared in**:
 
-- [extra/git/hooks.nix](https://github.com/numtide/devshell/tree/main/extra/git/hooks.nix)
+- [extra/git/hooks.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/git/hooks.nix)
 
 ### `git.hooks.prepare-commit-msg.text`
 
@@ -924,7 +716,7 @@ string
 
 **Declared in**:
 
-- [extra/git/hooks.nix](https://github.com/numtide/devshell/tree/main/extra/git/hooks.nix)
+- [extra/git/hooks.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/git/hooks.nix)
 
 ### `language.c.compiler`
 
@@ -943,7 +735,7 @@ package or string convertible to it
 
 **Declared in**:
 
-- [extra/language/c.nix](https://github.com/numtide/devshell/tree/main/extra/language/c.nix)
+- [extra/language/c.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/c.nix)
 
 ### `language.c.includes`
 
@@ -962,11 +754,11 @@ list of (package or string convertible to it)
 
 **Declared in**:
 
-- [extra/language/c.nix](https://github.com/numtide/devshell/tree/main/extra/language/c.nix)
+- [extra/language/c.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/c.nix)
 
 ### `language.c.libraries`
 
-Use this when another language dependens on a dynamic library
+Use this when another language depends on a dynamic library
 **Type**:
 
 ```console
@@ -981,7 +773,7 @@ list of (package or string convertible to it)
 
 **Declared in**:
 
-- [extra/language/c.nix](https://github.com/numtide/devshell/tree/main/extra/language/c.nix)
+- [extra/language/c.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/c.nix)
 
 ### `language.go.package`
 
@@ -995,7 +787,7 @@ package or string convertible to it
 **Default value**:
 
 ```nix
-<derivation go-1.21.5>
+<derivation go-1.22.5>
 ```
 
 **Example value**:
@@ -1006,7 +798,7 @@ pkgs.go
 
 **Declared in**:
 
-- [extra/language/go.nix](https://github.com/numtide/devshell/tree/main/extra/language/go.nix)
+- [extra/language/go.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/go.nix)
 
 ### `language.go.GO111MODULE`
 
@@ -1025,7 +817,82 @@ one of "on", "off", "auto"
 
 **Declared in**:
 
-- [extra/language/go.nix](https://github.com/numtide/devshell/tree/main/extra/language/go.nix)
+- [extra/language/go.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/go.nix)
+
+### `language.hare.package`
+
+Which Hare package to use
+**Type**:
+
+```console
+package or string convertible to it
+```
+
+**Default value**:
+
+```nix
+<derivation hare-0.24.2>
+```
+
+**Example value**:
+
+```nix
+pkgs.hare
+```
+
+**Declared in**:
+
+- [extra/language/hare.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/hare.nix)
+
+### `language.hare.thirdPartyLibs`
+
+List of extra packages (coming from hareThirdParty) to add
+**Type**:
+
+```console
+list of (package or string convertible to it)
+```
+
+**Default value**:
+
+```nix
+[ ]
+```
+
+**Example value**:
+
+```nix
+[ hareThirdParty.hare-compress ]
+```
+
+**Declared in**:
+
+- [extra/language/hare.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/hare.nix)
+
+### `language.hare.vendoredLibs`
+
+List of paths to add to HAREPATH
+**Type**:
+
+```console
+list of string
+```
+
+**Default value**:
+
+```nix
+[ ]
+```
+
+**Example value**:
+
+```nix
+[ ./vendor/lib ]
+```
+
+**Declared in**:
+
+- [extra/language/hare.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/hare.nix)
 
 ### `language.perl.package`
 
@@ -1050,7 +917,7 @@ pkgs.perl538
 
 **Declared in**:
 
-- [extra/language/perl.nix](https://github.com/numtide/devshell/tree/main/extra/language/perl.nix)
+- [extra/language/perl.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/perl.nix)
 
 ### `language.perl.extraPackages`
 
@@ -1075,7 +942,7 @@ list of (package or string convertible to it)
 
 **Declared in**:
 
-- [extra/language/perl.nix](https://github.com/numtide/devshell/tree/main/extra/language/perl.nix)
+- [extra/language/perl.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/perl.nix)
 
 ### `language.perl.libraryPaths`
 
@@ -1100,7 +967,7 @@ list of string
 
 **Declared in**:
 
-- [extra/language/perl.nix](https://github.com/numtide/devshell/tree/main/extra/language/perl.nix)
+- [extra/language/perl.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/perl.nix)
 
 ### `language.ruby.package`
 
@@ -1119,7 +986,7 @@ package or string convertible to it
 
 **Declared in**:
 
-- [extra/language/ruby.nix](https://github.com/numtide/devshell/tree/main/extra/language/ruby.nix)
+- [extra/language/ruby.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/ruby.nix)
 
 ### `language.ruby.nativeDeps`
 
@@ -1138,7 +1005,7 @@ list of (package or string convertible to it)
 
 **Declared in**:
 
-- [extra/language/ruby.nix](https://github.com/numtide/devshell/tree/main/extra/language/ruby.nix)
+- [extra/language/ruby.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/ruby.nix)
 
 ### `language.rust.enableDefaultToolchain`
 
@@ -1157,7 +1024,7 @@ boolean
 
 **Declared in**:
 
-- [extra/language/rust.nix](https://github.com/numtide/devshell/tree/main/extra/language/rust.nix)
+- [extra/language/rust.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/rust.nix)
 
 ### `language.rust.packageSet`
 
@@ -1176,7 +1043,7 @@ attribute set
 
 **Declared in**:
 
-- [extra/language/rust.nix](https://github.com/numtide/devshell/tree/main/extra/language/rust.nix)
+- [extra/language/rust.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/rust.nix)
 
 ### `language.rust.tools`
 
@@ -1200,7 +1067,7 @@ list of string
 
 **Declared in**:
 
-- [extra/language/rust.nix](https://github.com/numtide/devshell/tree/main/extra/language/rust.nix)
+- [extra/language/rust.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/language/rust.nix)
 
 ### `serviceGroups`
 
@@ -1220,7 +1087,7 @@ attribute set of (submodule)
 
 **Declared in**:
 
-- [modules/services.nix](https://github.com/numtide/devshell/tree/main/modules/services.nix)
+- [modules/services.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/services.nix)
 
 ### `serviceGroups.<name>.description`
 
@@ -1240,7 +1107,7 @@ null
 
 **Declared in**:
 
-- [modules/services.nix](https://github.com/numtide/devshell/tree/main/modules/services.nix)
+- [modules/services.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/services.nix)
 
 ### `serviceGroups.<name>.name`
 
@@ -1260,7 +1127,7 @@ null
 
 **Declared in**:
 
-- [modules/services.nix](https://github.com/numtide/devshell/tree/main/modules/services.nix)
+- [modules/services.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/services.nix)
 
 ### `serviceGroups.<name>.services`
 
@@ -1280,7 +1147,7 @@ attribute set of (submodule)
 
 **Declared in**:
 
-- [modules/services.nix](https://github.com/numtide/devshell/tree/main/modules/services.nix)
+- [modules/services.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/services.nix)
 
 ### `serviceGroups.<name>.services.<name>.command`
 
@@ -1294,7 +1161,7 @@ string
 
 **Declared in**:
 
-- [modules/services.nix](https://github.com/numtide/devshell/tree/main/modules/services.nix)
+- [modules/services.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/services.nix)
 
 ### `serviceGroups.<name>.services.<name>.name`
 
@@ -1314,7 +1181,7 @@ null
 
 **Declared in**:
 
-- [modules/services.nix](https://github.com/numtide/devshell/tree/main/modules/services.nix)
+- [modules/services.nix](https://github.com/KaiSforza/devshell/tree/attrs/modules/services.nix)
 
 ### `services.postgres.package`
 
@@ -1333,7 +1200,7 @@ package or string convertible to it
 
 **Declared in**:
 
-- [extra/services/postgres.nix](https://github.com/numtide/devshell/tree/main/extra/services/postgres.nix)
+- [extra/services/postgres.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/services/postgres.nix)
 
 ### `services.postgres.createUserDB`
 
@@ -1354,7 +1221,7 @@ true
 
 **Declared in**:
 
-- [extra/services/postgres.nix](https://github.com/numtide/devshell/tree/main/extra/services/postgres.nix)
+- [extra/services/postgres.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/services/postgres.nix)
 
 ### `services.postgres.initdbArgs`
 
@@ -1386,7 +1253,7 @@ list of string
 
 **Declared in**:
 
-- [extra/services/postgres.nix](https://github.com/numtide/devshell/tree/main/extra/services/postgres.nix)
+- [extra/services/postgres.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/services/postgres.nix)
 
 ### `services.postgres.setupPostgresOnStartup`
 
@@ -1411,7 +1278,7 @@ true
 
 **Declared in**:
 
-- [extra/services/postgres.nix](https://github.com/numtide/devshell/tree/main/extra/services/postgres.nix)
+- [extra/services/postgres.nix](https://github.com/KaiSforza/devshell/tree/attrs/extra/services/postgres.nix)
 
 ## Extra options
 

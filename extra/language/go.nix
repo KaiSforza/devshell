@@ -31,9 +31,7 @@ with lib;
 
   config = {
     env = {
-      GO111MODULE = {
-        value = cfg.GO111MODULE;
-      };
+      GO111MODULE = cfg.GO111MODULE;
     };
 
     devshell.packages = [ cfg.package ];

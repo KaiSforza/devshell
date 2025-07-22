@@ -80,10 +80,8 @@ with lib;
       }
       # fenix provides '.rust-src' in the 'complete' toolchain configuration
       // lib.optionalAttrs (cfg.enableDefaultToolchain && cfg.packageSet ? rust-src) {
-        RUST_SRC_PATH = {
-          # rust-analyzer may use this to quicker find the rust source
-          value = "${cfg.packageSet.rust-src}/lib/rustlib/src/rust/library";
-        };
+        # rust-analyzer may use this to quicker find the rust source
+        RUST_SRC_PATH = "${cfg.packageSet.rust-src}/lib/rustlib/src/rust/library";
       };
   };
 }

@@ -20,7 +20,7 @@ let
   ];
 
   pkgsModule =
-    { config, ... }:
+    _:
     {
       config = {
         _module.args.baseModules = modules;

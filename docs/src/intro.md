@@ -9,7 +9,7 @@ Unfortunately, an unbounded amount of time is usually spent installing build
 dependencies on the system. If you are lucky, it's a pure $LANG project and
 all it takes is to install that language and its dedicated package manager. On
 bigger projects it's quite common to need more than one language to be
-installed. The side-effect of that is that it creates silos withing companies,
+installed. The side-effect of that is that it creates silos within companies,
 and less contributors in the open-source world.
 
 It should be possible to run a single command that loads and makes those

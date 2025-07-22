@@ -17,7 +17,7 @@ with lib;
     libraries = mkOption {
       type = types.listOf strOrPackage;
       default = [ ];
-      description = "Use this when another language dependens on a dynamic library";
+      description = "Use this when another language depends on a dynamic library";
     };
 
     includes = mkOption {

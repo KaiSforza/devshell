@@ -1,7 +1,7 @@
 {
-  pkgs,
   devshell,
   runTest,
+  ...
 }:
 {
   # Basic devshell usage
